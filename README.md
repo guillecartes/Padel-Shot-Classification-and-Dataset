@@ -1,0 +1,2 @@
+# Padel-Shot-Clasification-and-Dataset
+This study is the final proyect of Guillermo Cartes Domínguez, tutored by Daniel Gutiérrez Reina, Alejandro Tapia Córdoba and Evelia Franco Álvarez. 13 differents padel shot is recorded in a dataset with more than 2000 shots. A comparation between some of the main machine learning algorithms that aim to classify padel strokes is carried out. These algorithms are neural networks, convoluctional neural networks 1D, decision tree, K nearest neighbors, and support vector machine.
