@@ -9,8 +9,8 @@ import pandas as pd
 
 datos = pd.read_csv("/Users/guill/OneDrive/Escritorio/Master/TFM/base de datos/guardados/Dataset12.csv")
 
-print(datos.shape)
-print(datos.info())
+#print(datos.shape)
+#print(datos.info())
 
 #%% feature engineering, realizamos un nuevo data frame con
 # las siguientes características para cada golpe
@@ -82,32 +82,59 @@ from sklearn.model_selection import train_test_split
 X = datos_features.drop(columns = ["tipo_golpe"])
 y = datos_features["tipo_golpe"]
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=5)
 
 
 #%% entrenamiento modelo
 
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
 
 K=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30]
+
+scores = list()
+
+best_accuracy = 0
+best_k = 0
 
 for i in K:
     model = KNeighborsClassifier(n_neighbors=i)
 
     model.fit(X_train, y_train)
 
-    #%% resultados test
+    # resultados test
     
     ypred = model.predict(X_test)
     
-    from sklearn.metrics import accuracy_score
+    score = accuracy_score(y_test, ypred)*100.00
+    print("K = ",i,": ", score) 
+    scores.append(score)
     
-    print("K = ",i,": ", accuracy_score(y_test, ypred)*100.00) 
+    if score>best_accuracy:
+        best_accuracy = score
+        best_k = i
 
+
+print('Mejor parámetro = %d, con un accuracy de = %.2f %%' % (best_k, best_accuracy))
+
+from matplotlib import pyplot
+pyplot.figure()
+pyplot.boxplot(scores)
+pyplot.title('Accuracy para diferentes valores de K')
+pyplot.ylabel("Accuracy (%)")
+pyplot.grid(linestyle='-', linewidth=0.3)
+
+print(scores)
 
 #%% matriz de confusión 
 
-#Se muestra la matriz de confusion del ultimo K del bucle. Si se quieren mostrar de todos, meter la llamada a la funcion dentro del bucle for
+#Se muestra la matriz de confusion para el mejor K
+
+model = KNeighborsClassifier(n_neighbors=best_k)
+model.fit(X_train, y_train)
+ypred = model.predict(X_test)
+    
+score = accuracy_score(y_test, ypred)*100.00
 
 import numpy as np
 import matplotlib.pyplot as plt
