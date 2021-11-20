@@ -29,6 +29,7 @@ X = datos.drop(columns = ["tipo_golpe"])
 y = datos["tipo_golpe"]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=5)
+#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y)
 
 
 #%% entrenamiento modelo
@@ -53,7 +54,7 @@ for i in K:
     ypred = model.predict(X_test)
     
     score = accuracy_score(y_test, ypred)*100.00
-    print("K = ",i,": ", score) 
+    print("K = %d : %.2f %%"% (i, score)) 
     scores.append(score)
     
     if score>best_accuracy:

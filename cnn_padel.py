@@ -278,7 +278,7 @@ def summarize_results(scores, filters, epochs, batch_size):
 	pyplot.xlabel("Número de filtros")
 	pyplot.ylabel("Accuracy (%)")
 	pyplot.grid(linestyle='-', linewidth=0.3)
-	pyplot.savefig('exp_cnn_filters.png')
+	#pyplot.savefig('exp_cnn_filters.png')
     
 	return best_params
 

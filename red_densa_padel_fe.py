@@ -226,14 +226,14 @@ def evaluate_model(trainX, trainy, testX, testy, test_deportistas, n_filters, ep
 	#Flatten convierte las características en un vector para pasarselo a la capa densa.
 	model.add(Flatten())
 	model.add(Dense(n_filters, activation='relu'))
-	#model.add(Dense(n_filters/2, activation='relu'))
+	model.add(Dense(n_filters/2, activation='relu'))
 	model.add(Dense(n_outputs, activation='softmax'))
 	
 	model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 	# fit network
 	train_log = model.fit(trainX, trainy, validation_split=0.2, epochs=epochs, batch_size=batch_size, verbose=verbose)
 	
-	#model.summary()
+	model.summary()
     
 	# evaluate model
 	loss, accuracy = model.evaluate(testX, testy, batch_size=batch_size, verbose=0)
@@ -252,8 +252,8 @@ def evaluate_model(trainX, trainy, testX, testy, test_deportistas, n_filters, ep
 	confusion_mtx = confusion_matrix(Y_true, Y_pred_classes) 
 	#print(confusion_mtx)
     # Mostramos los resultados
-	#plt.figure()
-	#plot_confusion_matrix(cm = confusion_mtx, classes = range(13)) 
+	plt.figure()
+	plot_confusion_matrix(cm = confusion_mtx, classes = range(13)) 
      
 	fallos=identify_faults(test_deportistas,Y_true,Y_pred_classes) 
 	#print("Los fallos corresponden a: ",collections.Counter(fallos))
@@ -298,11 +298,12 @@ def summarize_results(scores, filters, epochs, batch_size):
 			best_accuracy = m
 			best_params = [m, s, epochs, batch_size, filters[i]]
 	# boxplot of scores
+	print("scores es",scores)
 	#pyplot.figure( figsize=(10,7))
 	pyplot.figure()
 	pyplot.boxplot(scores, labels=filters)
-	pyplot.title('Accuracy para Epoch=%d, Batch_size=%d, Filtros capa 1=%d' % (epochs, batch_size, filters[i]))
-	#pyplot.title('Accuracy para Epoch=%d, Batch_size=%d, Filtros capa 1=%d, Filtros capa 2=%d' % (epochs, batch_size, filters[i], filters[i]/2))
+	#pyplot.title('Accuracy para Epoch=%d, Batch_size=%d, Filtros capa 1=%d' % (epochs, batch_size, filters[i]))
+	pyplot.title('Accuracy para Epoch=%d, Batch_size=%d, Filtros capa 1=%d, Filtros capa 2=%d' % (epochs, batch_size, filters[i], filters[i]/2))
 	pyplot.xlabel("Número de filtros")
 	pyplot.ylabel("Accuracy (%)")
 	pyplot.grid(linestyle='-', linewidth=0.3)
@@ -312,7 +313,7 @@ def summarize_results(scores, filters, epochs, batch_size):
 
 
 # run an experiment
-def run_experiment(filters, epochs, batch_size, repeats=10):
+def run_experiment(filters, epochs, batch_size, repeats=15):
 	# load data
 	trainX, trainy, testX, testy, test_deportistas = load_dataset(directorio_dataset)
 	# test each parameter
@@ -327,7 +328,7 @@ def run_experiment(filters, epochs, batch_size, repeats=10):
 				for r in range(repeats):
 					score = evaluate_model(trainX, trainy, testX, testy, test_deportistas, p, i, j)
 					score = score * 100.0
-					print('>p=%d #%d: %.3f' % (p, r+1, score))
+					print('>p=%d #%d: %.2f' % (p, r+1, score))
 					scores.append(score)
 				all_scores.append(scores)
 			# summarize results
@@ -341,9 +342,9 @@ def run_experiment(filters, epochs, batch_size, repeats=10):
 	print('Epoch=%d; Batch_size=%d; Filtros=%d: %.3f%% (+/-%.3f)' % (best_params[2], best_params[3], best_params[4], best_params[0], best_params[1],))
 	 
 # run the experiment
-epochs = [100]
-batch_size = [50]
-filters = [1500]
+epochs = [200]
+batch_size = [30]
+filters = [1000]
 
 # =============================================================================
 # epochs = [40, 70, 100, 200]

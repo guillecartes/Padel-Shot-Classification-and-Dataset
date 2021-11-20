@@ -214,8 +214,8 @@ def evaluate_model(trainX, trainy, testX, testy, test_deportistas, n_filters, ep
 	confusion_mtx = confusion_matrix(Y_true, Y_pred_classes) 
 	#print(confusion_mtx)
     # Mostramos los resultados
-	#plt.figure()
-	#plot_confusion_matrix(cm = confusion_mtx, classes = range(13)) 
+	plt.figure()
+	plot_confusion_matrix(cm = confusion_mtx, classes = range(13)) 
      
 	fallos=identify_faults(test_deportistas,Y_true,Y_pred_classes) 
 	#print("Los fallos corresponden a: ",collections.Counter(fallos))
@@ -260,6 +260,7 @@ def summarize_results(scores, filters, epochs, batch_size):
 			best_accuracy = m
 			best_params = [m, s, epochs, batch_size, filters[i]]
 	# boxplot of scores
+	print("scores es",scores)
 	#pyplot.figure( figsize=(10,7))
 	pyplot.figure()
 	pyplot.boxplot(scores, labels=filters)
@@ -274,7 +275,7 @@ def summarize_results(scores, filters, epochs, batch_size):
 
 
 # run an experiment
-def run_experiment(filters, epochs, batch_size, repeats=5):
+def run_experiment(filters, epochs, batch_size, repeats=15):
 	# load data
 	trainX, trainy, testX, testy, test_deportistas = load_dataset(directorio_dataset)
 	# test each parameter
@@ -289,7 +290,7 @@ def run_experiment(filters, epochs, batch_size, repeats=5):
 				for r in range(repeats):
 					score = evaluate_model(trainX, trainy, testX, testy, test_deportistas, p, i, j)
 					score = score * 100.0
-					print('>p=%d #%d: %.3f' % (p, r+1, score))
+					print('>p=%d #%d: %.2f' % (p, r+1, score))
 					scores.append(score)
 				all_scores.append(scores)
 			# summarize results
@@ -306,7 +307,7 @@ def run_experiment(filters, epochs, batch_size, repeats=5):
 # =============================================================================
 # epochs = [40, 70]
 # batch_size = [30, 50, 70]
-# filters = [200, 1000, 2000]
+# filters = [100, 200, 1000]
 # =============================================================================
 
 epochs = [70]

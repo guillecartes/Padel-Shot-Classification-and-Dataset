@@ -89,7 +89,8 @@ from sklearn.model_selection import train_test_split
 X = datos_features.drop(columns = ["tipo_golpe"])
 y = datos_features["tipo_golpe"]
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=5)
+#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=5)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y)
 
 
 #%% matriz de confusión 
@@ -132,9 +133,11 @@ def plot_confusion_matrix(cm, classes,
     plt.yticks(range(13), golpes)
 
 #%% entrenamiento modelo
+from sklearn import svm
+from sklearn.metrics import accuracy_score
 
 def evaluate_model(param_C,kernel_type):    
-    from sklearn import svm
+    
     
     model = svm.SVC(C=param_C, decision_function_shape='ovo', kernel=kernel_type)
     
@@ -143,8 +146,6 @@ def evaluate_model(param_C,kernel_type):
     #%% resultados test
     
     ypred = model.predict(X_test)
-    
-    from sklearn.metrics import accuracy_score
     
     accuracy = accuracy_score(y_test, ypred)
     #print(accuracy) 
@@ -187,6 +188,20 @@ def summarize_results(scores, C, kernel):
         
 	print('Best Params: Kernel=%s, C=%f: %.3f%%' % (best_params[2], best_params[1], best_params[0]))
 
+	#Matriz de Confusion de mejores parametros
+	model = svm.SVC(C=best_params[1], decision_function_shape='ovo', kernel=best_params[2])
+	model.fit(X_train, y_train)
+    
+	ypred = model.predict(X_test)
+       
+	accuracy = accuracy_score(y_test, ypred)
+	print(accuracy) 
+    
+	cm = confusion_matrix(y_test, ypred)       
+    
+	plt.figure()
+	plot_confusion_matrix(cm, classes = range(3))
+
 # run an experiment
 def run_experiment(C, Kernel):
 
@@ -196,7 +211,7 @@ def run_experiment(C, Kernel):
 		for j in C:
 			score = evaluate_model(j, i)
 			score = score * 100.00
-			print('>#%s #%.2f: %.3f' % (i, j, score))
+			print('>#%s #%.2f: %.2f' % (i, j, score))
 			scores.append(score)
 		all_scores.append(scores)
 	# summarize results
